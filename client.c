@@ -99,14 +99,14 @@ void send_image(int socket)
     		memcpy(&header[0 + strlen(DATE_h) + strlen(sender) + strlen(subject) + strlen(recep)], &content_a , strlen(content_a));
     		return header;
 }
- int main(int argc, char *argv[])
- {
-    int socket_id,n;
-    int portno;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
-    char cname[256];
-    char buff[10240];
+	int main(int argc, char *argv[])
+ 	{
+    		int socket_id,n;
+    		int portno;
+    		struct sockaddr_in serv_addr;
+    		struct hostent *server;
+    		char cname[256];
+    		char buff[10240];
 	if(argc < 3)
     	{
         	perror("\nPlease enter the hostname and port number.\n");
@@ -148,3 +148,104 @@ void send_image(int socket)
         	intake: gets(cname);
         	//cname[strlen(cname) + 1] = '\0';
         	char code[4];//to store the 3 digit response code received from server
+
+	if(strcasecmp(cname,"HELO") == 0)
+        {
+		bzero(buff,10240);
+		strcpy(buff,"HELO ");
+		strcat(buff, domain);
+		strcat(buff,"\r\n");
+		n = write(socket_id,buff,strlen(buff));
+	if(n < 0)
+	{
+                printf("\nError occured while writing to socket!\n");
+	}
+		printf("\nCLIENT : %s",buff);  //HELO domain
+            	bzero(buff,10240);
+            	n = read(socket_id,buff,10239);
+	if(n < 0)
+	{
+                printf("\nError occured while reading from socket!\n");
+	}
+            	printf("SERVER : %s\n",buff);    //250 Hello domain
+            	//checking error
+            	code[0] = buff[0];
+            	code[1] = buff[1];
+            	code[2] = buff[2];
+            	code[3] = '\0';
+
+	if(strcmp(code,"250") == 0)
+	{
+                printf("\nGo to next command...\n\n");
+	}
+	else
+	{
+                printf("\nError occured!\n\n");
+	}
+            	fflush(stdin);
+        }
+        else if(strcasecmp(cname,"MAIL FROM") == 0)
+        {
+            	bzero(buff,10240);
+            	printf("\nEnter Sender Email id : ");
+            	scanf("%s",mail_from);
+            	strcpy(buff,"MAIL FROM:<");
+            	strcat(buff,mail_from);
+            	strcat(buff,">");
+            	strcat(buff,"\r\n");
+            	n = write(socket_id,buff,strlen(buff));
+	if(n < 0)
+	{
+                printf("\nError occured while writing to socket!\n");
+	}
+           	printf("\nCLIENT : %s",buff);  //MAIL FROM:<your email id>
+            	bzero(buff,10240);
+            	n = read(socket_id,buff,10239);
+	if(n < 0)
+	{
+                printf("\nError occured while reading from socket!\n");
+	}
+            	printf("SERVER : %s\n",buff);  //250 OK
+		//checking error
+            	code[0] = buff[0];
+            	code[1] = buff[1];
+            	code[2] = buff[2];
+            	code[3] = '\0';
+
+	if(strcmp(code,"250") == 0)
+	{
+                printf("\nGo to next command...\n\n");
+        }
+        else
+	{
+                printf("\nError occured!\n\n");
+        }
+            	fflush(stdin);
+        }
+        else if(strcasecmp(cname,"RCPT TO") == 0)
+        {
+            	bzero(buff,10240);
+            	printf("\nEnter Recipient Email id : ");
+            	scanf("%s",mail_to);
+            	strcpy(buff,"RCPT TO:<");
+            	strcat(buff,mail_to);
+            	strcat(buff,">");
+            	strcat(buff,"\r\n");
+            	n = write(socket_id,buff,strlen(buff));
+	if(n < 0)
+	{
+                printf("\nError occured while writing to socket!\n");
+	}
+            	printf("\nCLIENT : %s",buff);  //RCPT TO:<your email id>
+            	bzero(buff,10240);
+            	n = read(socket_id,buff,10239);
+	if(n < 0)
+	{
+                printf("\nError occured while reading from socket!\n");
+	}
+            	printf("SERVER : %s\n",buff);  //250 OK
+		//checking error
+            	code[0] = buff[0];
+            	code[1] = buff[1];
+            	code[2] = buff[2];
+            	code[3] = '\0';
