@@ -274,8 +274,8 @@ int receive_image(int socket)
 	{
 		perror("Error occured while writing to socket!");
 	}
-    	else
-{	printf("\nConnection closed successfully with the client!\n\n");
-		return;
-}
+    	else{
+	printf("\nConnection closed successfully with the client!\n\n");
+	}
+
     }
