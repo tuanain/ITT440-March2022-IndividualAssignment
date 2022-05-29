@@ -251,12 +251,12 @@ int receive_image(int socket)
 		strcpy(buff,"250 Image received successfully");
 		printf("SENT : %s\n\n",buff);
 		n = write(newsockfd,buff,strlen(buff));
-} 	if (n < 0) 
+ 	if (n < 0) 
  	{
 		perror("Error occured while writing to socket!");
 	}
       }
- 
+
 	else if(strstr(buff,"QUIT") != NULL)
         {
                 break;
