@@ -103,10 +103,8 @@ int receive_image(int socket)
             	printf(" \n");
 	}
     }
-}
 
- int main(int argc, char *argv[]);
- {
+ int main(int argc, char *argv[]);{
     	int sockfd, newsockfd, n, portno, clilen;
     	struct sockaddr_in serv_addr, cli_addr;
     	char servers[2][100] = {"smtp.gmail.com","smtp.yahoo.com"};
@@ -232,7 +230,7 @@ int receive_image(int socket)
 		perror("Error occured while writing to socket!");
 	}
        }
-}
+
 	else if(strstr(buff,"Attachment") != NULL)
 	{
             	printf("RECEIVED : %s", buff);
@@ -262,7 +260,7 @@ int receive_image(int socket)
         {
                 break;
         }
-}
+ 
 	while(strcmp(buff,"QUIT") != 0);
 
     		printf("RECEIVED : %s");
