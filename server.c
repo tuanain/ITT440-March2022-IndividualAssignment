@@ -105,7 +105,7 @@ int receive_image(int socket)
     }
 }
 
- int main(int argc, char *argv[])
+ int main(int argc, char *argv[]);
  {
     	int sockfd, newsockfd, n, portno, clilen;
     	struct sockaddr_in serv_addr, cli_addr;
@@ -146,7 +146,7 @@ int receive_image(int socket)
         if (n < 0)
         {
             	printf("\nError occured while reading from socket!\n");
-            	break;
+       
         }
         else
         {
@@ -207,7 +207,7 @@ int receive_image(int socket)
 	if (n < 0)
 	{
 		printf("\nError occured while reading from socket!\n");
-		break;
+		exit;
 	}
                 printf("\n\n----------| Received Email Header & Content |----------\n\n%s\n",buff);
                 printf("-------------------------------------------------------\n\n");
@@ -218,7 +218,7 @@ int receive_image(int socket)
 	if (n < 0)
 	{
 		printf("\nError occured while reading from socket!\n");
-		break;
+		
 	}
 	if(strstr(buff,".")!=NULL)
 	{
@@ -262,11 +262,10 @@ int receive_image(int socket)
         {
                 break;
         }
-       }
 }
 	while(strcmp(buff,"QUIT") != 0);
 
-    		printf("RECEIVED : %s",buff);
+    		printf("RECEIVED : %s");
     		bzero(buff,10240);
     		strcpy(buff,"221 Bye");
     		printf("SENT : %s\n\n",buff);
@@ -275,6 +274,8 @@ int receive_image(int socket)
 	{
 		perror("Error occured while writing to socket!");
 	}
-    		printf("\nConnection closed successfully with the client!\n\n");
+    	else
+{	printf("\nConnection closed successfully with the client!\n\n");
 		return;
+}
     }
