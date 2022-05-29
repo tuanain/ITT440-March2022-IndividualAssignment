@@ -148,7 +148,7 @@ void send_image(int socket)
     	do
     	{
         	printf("Enter the command : ");
-        	intake: fgets(cname);  
+        	intake: fgets(cname, 256, stdin);  
         	//cname[strlen(cname) + 1] = '\0';
         	char code[4];//to store the 3 digit response code received from server
 
