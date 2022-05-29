@@ -45,6 +45,7 @@ void send_image(int socket)
 	do
 	{
 		status=read(socket, &read_buffer, 255);
+		//printf("Bytes read: %i\n",status);
 	}
 	while(status < 0);
 
@@ -59,6 +60,8 @@ void send_image(int socket)
 		status = write(socket, send_buffer, readsize);
 	}
 	while(status<0);
+		//printf("Packet number: %i\n",packet_index);
+	    	//printf("Packet size sent: %i\n",readsize);
 		printf(" \n");
 		printf(" \n");
         	packet_index++;
@@ -66,6 +69,36 @@ void send_image(int socket)
 	}
 }
 
+	char * Mail_Header(char *from,char *to,char *sub,char *content)
+	{
+    		time_t t;
+    		time(&t);
+    		char *header = NULL;
+    		char date[26];
+    		char DATE_h[8 + strlen(date)];
+    		char sender[8 + strlen(from)];   //FROM: sender's_email\r\n
+    		char recep[6 + strlen(to)];      //TO: recepient's_email\r\n
+    		char subject[11 + strlen(sub)];
+    		char content_a[1 + strlen(content) + 2 + 1 + 1];
+
+		strftime(date, (33), "%a %d %b %Y %H:%M:%S",localtime(&t));
+    		sprintf(DATE_h,"DATE: %s\r\n",date);
+    		sprintf(sender,"FROM: %s\r\n",from);
+    		sprintf(subject,"Subject: %s\r\n",sub);
+    		sprintf(recep,"TO: %s\r\n",to);
+		//extra \n is used to end the header part
+    		sprintf(content_a,"%s\r\n",content);
+
+    		int header_length = strlen(DATE_h) + strlen(sender) + strlen(subject) + strlen(recep) + strlen(content_a);
+    		header = (char *) malloc(header_length * sizeof(char));
+
+    		memcpy(&header[0], &DATE_h, strlen(DATE_h));
+    		memcpy(&header[0 + strlen(DATE_h)], &sender , strlen(sender));
+    		memcpy(&header[0 + strlen(DATE_h) + strlen(sender)], &subject , strlen(subject));
+    		memcpy(&header[0 + strlen(DATE_h) + strlen(sender) + strlen(subject)], &recep , strlen(recep));
+    		memcpy(&header[0 + strlen(DATE_h) + strlen(sender) + strlen(subject) + strlen(recep)], &content_a , strlen(content_a));
+    		return header;
+}
  int main(int argc, char *argv[])
  {
     int socket_id,n;
@@ -74,3 +107,44 @@ void send_image(int socket)
     struct hostent *server;
     char cname[256];
     char buff[10240];
+	if(argc < 3)
+    	{
+        	perror("\nPlease enter the hostname and port number.\n");
+        	exit(0);
+    	}
+    		portno = atoi(argv[2]);
+
+    		socket_id = socket(AF_INET,SOCK_STREAM, 0);
+
+    	if(socket_id < 0)
+    	{
+        	perror("\nError occured while opening the socket!\n");
+        	exit(0);
+    	}
+    		server = gethostbyname(argv[1]);
+
+    	if(server == NULL)
+    	{
+        	perror("\nError: No such host found!\n");
+        	exit(0);
+    	}
+
+    		bzero((char *) &serv_addr, sizeof(serv_addr));
+    		serv_addr.sin_family = AF_INET;
+    		bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr,server->h_length);
+    		serv_addr.sin_port = htons(portno);
+		//connect to the server
+
+		int connect_id;
+    		connect_id = connect(socket_id,(struct sockaddr *)&serv_addr, sizeof(serv_addr));
+    	if(connect_id < 0)
+    	{
+        	perror("Error occured while connecting to server...\n");
+    	}
+    		//Implementing commands which are used b/w Client and SMTP Server for communication
+    	do
+    	{
+        	printf("Enter the command : ");
+        	intake: gets(cname);
+        	//cname[strlen(cname) + 1] = '\0';
+        	char code[4];//to store the 3 digit response code received from server
