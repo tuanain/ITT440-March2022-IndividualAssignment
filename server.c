@@ -5,6 +5,18 @@
 	Protocol: SMTP
 
 */
+
+
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+ #include <string.h>
+ #include <netinet/in.h>
+ #include <stdlib.h>
+ #include <time.h>
+ #include <unistd.h>
+ #include <stdbool.h>
  #define domain "server,smtp.com"
 
  int recive_image(int socket)
@@ -122,18 +134,139 @@
     		perror("\nError occured while accepting on socket!\n");
     	}
 
+	//Implementing responses which SMTP Server sends to Client for Acknowledgement in the process of Email Receiving
+    	do
+    	{
+        	bzero(buff,10240);
+        	n = read(newsockfd,buff,10239);
+        if (n < 0)
+        {
+            	printf("\nError occured while reading from socket!\n");
+            	break;
+        }
+        else
+        {
+            	buff[n] = '\0'
+;
+	if(strstr(buff,"HELO")!=NULL)
+	{
+                printf("RECEIVED : %s",buff);
+                bzero(buff,10240);
+                strcpy(buff,"250 Hello ");
+                strcat(buff, domain);
+                printf("SENT : %s\n\n",buff);
+                n = write(newsockfd,buff,strlen(buff));
+	if (n<0)
+	{
+		perror("Error occured while writing to socket!");
+	}
+	else if(strstr(buff,"MAIL FROM")!=NULL)
+	{
+                printf("RECEIVED : %s",buff);
+                bzero(buff,10240);
+                strcpy(buff,"250 OK");
+                printf("SENT : %s\n\n",buff);
+                n = write(newsockfd,buff,strlen(buff));
+	if (n<0)
+	{
+		perror("Error occured while writing to socket!");
+	}
+	}
+	else if(strstr(buff,"RCPT TO")!=NULL)
+	{
+                printf("RECEIVED : %s",buff);
+                bzero(buff,10240);
+                strcpy(buff,"250 OK");
+                printf("SENT : %s\n\n",buff);
+                n = write(newsockfd,buff,strlen(buff));
+	if (n<0)
+	{
+		perror("Error occured while writing to socket!");
+	}
+	else if(strstr(buff,"DATA")!=NULL)
+	{
+                printf("RECEIVED : %s",buff);
+                bzero(buff,10240);
+                strcpy(buff,"354 Send message content; end with <CRLF>.<CRLF>");
+                printf("SENT : %s\n\n",buff);
+                n = write(newsockfd,buff,strlen(buff));
+	if (n < 0)
+	{
+		perror("Error occured while writing to socket!");
+	}
+
+                bzero(buff,10240);
+                n = read(newsockfd,buff,10239);
+	if (n < 0)
+	{
+		printf("\nError occured while reading from socket!\n");
+		break;
+	}
+                printf("\n\n----------| Received Email Header & Content |----------\n\n%s\n",buff);
+                printf("-------------------------------------------------------\n\n");
+                bzero(buff,10240);
+                n = read(newsockfd,buff,10239);
+
+	if (n < 0)
+	{
+		printf("\nError occured while reading from socket!\n");
+		break;
+	}
+	if(strstr(buff,".")!=NULL)
+	{
+                    printf("RECEIVED : %s",buff);
+                    bzero(buff,10240);
+                    strcpy(buff,"250 OK, message accepted for delivery.");
+                    printf("SENT : %s\n\n",buff);
+                    n = write(newsockfd,buff,strlen(buff));
+	if (n < 0) 
+	{
+		perror("Error occured while writing to socket!");
+	}
+       }
+      }
+	else if(strstr(buff,"Attachment") != NULL)
+	{
+            	printf("RECEIVED : %s", buff);
+		bzero(buff,10240);
+		strcpy(buff,"420 Send attachment");
+		printf("SENT : %s\n\n",buff);
+		n = write(newsockfd,buff,strlen(buff));
+
+	if (n < 0)
+	{
+		perror("Error occured while writing to socket!");
+	}
+	if(receive_image(newsockfd) != -1)
+	{
+		printf("Attached Image file received!\n");
+		bzero(buff,10240);
+		strcpy(buff,"250 Image received successfully");
+		printf("SENT : %s\n\n",buff);
+		n = write(newsockfd,buff,strlen(buff));
+	if (n < 0)
+	{
+		perror("Error occured while writing to socket!");
+	}
+      }
+     }
+	else if(strstr(buff,"QUIT") != NULL)
+        {
+                break;
+        }
+       }
+     }
 	while(strcmp(buff,"QUIT") != 0);
 
-		printf("RECEIVED : %s",buff);
+    		printf("RECEIVED : %s",buff);
     		bzero(buff,10240);
     		strcpy(buff,"221 Bye");
     		printf("SENT : %s\n\n",buff);
     		n = write(newsockfd,buff,strlen(buff));
     	if (n<0)
 	{
-		perror("Error occured while writing to socket!"); 
+		perror("Error occured while writing to socket!");
 	}
-
-		printf("\nConnection closed successfully!\n\n");
+    		printf("\nConnection closed successfully with the client!\n\n");
 		return 0;
 }
