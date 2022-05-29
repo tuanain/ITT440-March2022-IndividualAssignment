@@ -26,7 +26,7 @@ void send_image(int socket)
 	char send_buffer[10239];
 	char read_buffer[256];
 	char f_name[100];
-
+	char fgets;
     	printf("\nEnter Image Path/Image file name : ");
     	scanf("%s",f_name);
     	fpimage = fopen(f_name, "r");
