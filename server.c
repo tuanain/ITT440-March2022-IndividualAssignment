@@ -19,40 +19,41 @@
  #include <stdbool.h>
  #define domain "server,smtp.com"
 
- int recive_image(int socket)
+ int receive_image(int socket)
  {
 
 	int size;
-	char image_array[];
+	char image_array[10240];
 	FILE *fpimage;
-	int recvsize;
-	int size;
 	int readsize;
 	int writesize;
 	int packetindex;
 	int status;
+	int recsize;
 
 	do
 	{
 		status= read(socket, &size, sizeof(int));
 	}
-	while(status<0)
+	while(status<0);
 
 		printf("RECEIVED :\nPacket received");
+		//printf("Packet Size : %i\n",status);
+    		//printf("Image Size : %i\n",size);
 		printf(" \n");
 		char buffer[]="success!";
 	do
 	{
-		status=write(socket, &buffer);
+		status=write(socket, &buffer, sizeof(int));
 	}
 	while(status<0);
 
 		printf("Reply is successful\n");
-		print(" \n");
+		printf(" \n");
 
 		fpimage=fopen("received.jpeg", "w");
 
-	if(fpimage==null)
+	if(fpimage==NULL)
 	{
 		printf("error occured");
 		return -1;
@@ -63,15 +64,15 @@
     		fd_set fd_s;
     		int bufferfd;
 
-    	while(recvsize < size) 
+    	while(recsize < size)
 	{
         	FD_ZERO(&fd_s);
         	FD_SET(socket,&fd_s);
 
-        	bufferfd = select(FD_SETSIZE,&fd_s,NULL,NULL,&timeout);
+        	bufferfd = select(FD_SETSIZE, &fd_s, NULL, NULL, &timeout);
 
         if (bufferfd < 0)
-            	printf("Error occured due to bad file descriptor set.\n");
+            	printf("Error occured due to bad file descriptor.\n");
 
         if (bufferfd == 0)
             	printf("Error occured due to buffer read timeout expired.\n");
@@ -83,7 +84,9 @@
         }
 	while(readsize < 0);
 
-            	writesize = fwrite(img_array,1,readsize, fpimage);
+            	//printf("Packet Received number : %i\n",packetindex);
+            	//printf("Packet size : %i\n",readsize);
+		writesize = fwrite(image_array,1,readsize, fpimage);
             	printf("Image size written : %i\n",writesize);
 
         if(readsize!=writesize)
@@ -91,9 +94,9 @@
                 printf("Error occured while reading!\n");
         }
 
-		recvsize += readsize;
+		recsize += readsize;
             	packetindex++;
-            	printf("Total Received Image size : %i\n",recvsize);
+            	printf("Total Received Image size : %i\n",recsize);
             	printf(" \n");
 	}
     }
@@ -269,4 +272,4 @@
 	}
     		printf("\nConnection closed successfully with the client!\n\n");
 		return 0;
-}
+    }
