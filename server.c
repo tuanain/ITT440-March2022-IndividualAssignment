@@ -65,8 +65,8 @@ int receive_image(int socket)
     		fd_set fd_s;
     		int bufferfd;
 
-    	while(recsize < size)
-	{
+    	while(recsize < size);
+	
         	FD_ZERO(&fd_s);
         	FD_SET(socket,&fd_s);
 
