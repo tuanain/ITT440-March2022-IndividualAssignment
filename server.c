@@ -83,3 +83,15 @@ int recive_image(int socket)
     }
 }
 
+while(strcmp(buff,"QUIT") != 0);
+
+    printf("RECEIVED : %s",buff);
+    bzero(buff,10240);
+    strcpy(buff,"221 Bye");
+    printf("SENT : %s\n\n",buff);
+    n = write(newsockfd,buff,strlen(buff));
+    if (n<0) {  perror("Error occured while writing to socket!"); }
+    printf("\nConnection closed successfully with the client!\n\n");
+
+    return 0;
+}
