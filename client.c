@@ -192,7 +192,7 @@ void send_image(int socket)
             	bzero(buff,10240);
             	printf("\nEnter Sender Email id : ");
             	scanf("%s",mail_from);
-            	strcpy(buff,"MAIL FROM:<");
+            	strcpy(buff,"ain.nabilah1194@gmail.com");
             	strcat(buff,mail_from);
             	strcat(buff,">");
             	strcat(buff,"\r\n");
@@ -230,7 +230,7 @@ void send_image(int socket)
             	bzero(buff,10240);
             	printf("\nEnter Recipient Email id : ");
             	scanf("%s",mail_to);
-            	strcpy(buff,"RCPT TO:<");
+            	strcpy(buff,"ainnabilah@gmail.com");
             	strcat(buff,mail_to);
             	strcat(buff,">");
             	strcat(buff,"\r\n");
@@ -300,7 +300,7 @@ void send_image(int socket)
             	char content[450];
             	printf("\nEnter Subject : ");
             	scanf("%[^\n]",sub);
-            	printf("\nEnter content : (Press Tab and Enter Key to end)\n");
+            	printf("\nHi Ain\n");
             	scanf("%[^\t]",content);
 
             	bzero(buff,10240);
