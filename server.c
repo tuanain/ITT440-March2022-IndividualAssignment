@@ -17,6 +17,7 @@
  #include <time.h>
  #include <unistd.h>
  #include <stdbool.h>
+
  #define domain "server,smtp.com"
 
  int receive_image(int socket)
@@ -80,7 +81,7 @@
         {
         do
 	{
-                readsize = read(socket, img_array, 10240);
+                readsize = read(socket, image_array, 10240);
         }
 	while(readsize < 0);
 
@@ -107,10 +108,8 @@
     	int sockfd, newsockfd, n, portno, clilen;
     	struct sockaddr_in serv_addr, cli_addr;
     	char servers[2][100] = {"smtp.gmail.com","smtp.yahoo.com"};
-    	char buff[10240];
-	//used for buffer the incoming data from client
-    	char command[50];
-	//used to read command RECEIVED from client
+    	char buff[10240]; //used for buffer the incoming data from client
+    	char command[50]; //used to read command RECEIVED from client
 
     	sockfd = socket(AF_INET, SOCK_STREAM,0);
 
@@ -149,8 +148,8 @@
         }
         else
         {
-            	buff[n] = '\0'
-;
+            	buff[n] = '\0';
+	}
 	if(strstr(buff,"HELO")!=NULL)
 	{
                 printf("RECEIVED : %s",buff);
@@ -159,6 +158,7 @@
                 strcat(buff, domain);
                 printf("SENT : %s\n\n",buff);
                 n = write(newsockfd,buff,strlen(buff));
+	}
 	if (n<0)
 	{
 		perror("Error occured while writing to socket!");
@@ -170,6 +170,7 @@
                 strcpy(buff,"250 OK");
                 printf("SENT : %s\n\n",buff);
                 n = write(newsockfd,buff,strlen(buff));
+	}
 	if (n<0)
 	{
 		perror("Error occured while writing to socket!");
@@ -182,6 +183,7 @@
                 strcpy(buff,"250 OK");
                 printf("SENT : %s\n\n",buff);
                 n = write(newsockfd,buff,strlen(buff));
+	}
 	if (n<0)
 	{
 		perror("Error occured while writing to socket!");
@@ -193,13 +195,13 @@
                 strcpy(buff,"354 Send message content; end with <CRLF>.<CRLF>");
                 printf("SENT : %s\n\n",buff);
                 n = write(newsockfd,buff,strlen(buff));
-	if (n < 0)
+	if (n<0)
 	{
 		perror("Error occured while writing to socket!");
 	}
 
                 bzero(buff,10240);
-                n = read(newsockfd,buff,10239);
+                n = read(newsockfd, buff, 10239);
 	if (n < 0)
 	{
 		printf("\nError occured while reading from socket!\n");
@@ -207,8 +209,9 @@
 	}
                 printf("\n\n----------| Received Email Header & Content |----------\n\n%s\n",buff);
                 printf("-------------------------------------------------------\n\n");
-                bzero(buff,10240);
-                n = read(newsockfd,buff,10239);
+
+		bzero(buff, 10240);
+                n = read(newsockfd, buff, 10239);
 
 	if (n < 0)
 	{
@@ -222,12 +225,12 @@
                     strcpy(buff,"250 OK, message accepted for delivery.");
                     printf("SENT : %s\n\n",buff);
                     n = write(newsockfd,buff,strlen(buff));
-	if (n < 0) 
+	if (n < 0)
 	{
 		perror("Error occured while writing to socket!");
 	}
        }
-      }
+}
 	else if(strstr(buff,"Attachment") != NULL)
 	{
             	printf("RECEIVED : %s", buff);
@@ -252,13 +255,13 @@
 		perror("Error occured while writing to socket!");
 	}
       }
-     }
+}
 	else if(strstr(buff,"QUIT") != NULL)
         {
                 break;
         }
        }
-     }
+}
 	while(strcmp(buff,"QUIT") != 0);
 
     		printf("RECEIVED : %s",buff);
@@ -271,5 +274,5 @@
 		perror("Error occured while writing to socket!");
 	}
     		printf("\nConnection closed successfully with the client!\n\n");
-		return 0;
+		return;
     }
