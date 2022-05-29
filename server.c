@@ -20,7 +20,7 @@
 
  #define domain "server,smtp.com"
 
- int receive_image(int socket)
+int receive_image(int socket)
  {
 
 	int size;
@@ -73,11 +73,13 @@
         	bufferfd = select(FD_SETSIZE, &fd_s, NULL, NULL, &timeout);
 
         if (bufferfd < 0)
-            	printf("Error occured due to bad file descriptor.\n");
+        {    	printf("Error occured due to bad file descriptor.\n");}   
 
         if (bufferfd == 0)
+	{
             	printf("Error occured due to buffer read timeout expired.\n");
-        if(bufferfd > 0)
+	}       
+ if(bufferfd > 0)
         {
         do
 	{
